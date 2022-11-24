@@ -35,7 +35,8 @@ int error_return(void)
 
 int check_info(t_info *info)
 {
-	if (info->num_of_philos < 0 || info->time_to_die < 0 || info->time_to_eat < 0 || info->time_to_sleep < 0)
+	if (info->num_of_philos < 0 || info->time_to_die < 0 || \
+	info->time_to_eat < 0 || info->time_to_sleep < 0)
 		return (1);
 	if (info->num_of_must_eat != NONE)
 		if (info->time_to_sleep < 0)
@@ -74,8 +75,21 @@ int init_philosophers(t_info *info, t_philosopher **philosophers)
 	i = 0;
 	while (i < info->num_of_philos)
 	{
-		if (pthread_create(philosophers[i]->thread, NULL, )
+		if (pthread_create(&(*philosophers[i]->thread), NULL, \
+		lets_eat, &(*philosophers[i])) != 0)
+			return (1);
+		(*philosophers)->index = i + 1;
+		i++;
 	}
+	return (0);
+}
+
+void lets_eat(void *arg)
+{
+	t_philosopher *philosopher;
+
+	philosopher = (t_philosopher *)arg;
+
 }
 
 void keep_an_eye_on(t_info *info)
@@ -97,7 +111,7 @@ int main(int ac, char **av)
 		return (error_return());
 	if (init_info(ac, av, &info) == 1)
 		return (error_return());
-	if (init_philosophers(&info, &philosophers))
+	if (init_philosophers(&info, &philosophers) == 1)
 		return (error_return());
 	keep_an_eye_on(&info);
 	free_all(&info);

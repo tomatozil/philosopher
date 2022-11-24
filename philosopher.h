@@ -21,6 +21,7 @@ typedef struct s_info
 
 typedef struct s_philosopher
 {
+	int index;
 	int left_fork;
 	int right_fork;
 	int status;
