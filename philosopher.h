@@ -16,7 +16,9 @@ typedef struct s_info
 	int time_to_eat;
 	int time_to_sleep;
 	int num_of_must_eat;
-	pthread_mutex_t *fork; //fork(mutex) list
+	pthread_mutex_t *fork_mutex; //fork_mutex(mutex) list
+	pthread_mutex_t print_mutex;
+	pthread_mutex_t check_mutex;
 }	t_info;
 
 typedef struct s_philosopher
@@ -25,6 +27,7 @@ typedef struct s_philosopher
 	int left_fork;
 	int right_fork;
 	int status;
+	int eat_count;
 	long last_time_eat; //time_t -> _int64
 	t_info *info;
 	pthread_t thread;
@@ -35,6 +38,7 @@ typedef enum s_stauts
 	EAT,
 	SLEEP,
 	THINK,
+	LIVE,
 	DIE
 }	t_status;
 

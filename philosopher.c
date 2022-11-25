@@ -1,5 +1,13 @@
 #include "philosopher.h"
 
+long	get_time(void)
+{
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
 int	ft_atoi(char *str)
 {
 	int		cnt;
@@ -59,32 +67,19 @@ int init_info(int ac, char **av, t_info *info)
 	if (check_info(info) == 1)
 		return (1);
 	i = 0;
+	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
+	if (!info->fork_mutex)
+		return (1);
 	while (i < info->num_of_philos)
 	{
-		if (pthread_mutex_init(&info->fork[i], NULL) != 0)
+		if (pthread_mutex_init(&info->fork_mutex[i], NULL) != 0)
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int init_philosophers(t_info *info, t_philosopher **philosophers)
-{
-	int i;
-
-	i = 0;
-	while (i < info->num_of_philos)
-	{
-		if (pthread_create(&(*philosophers[i]->thread), NULL, \
-		lets_eat, &(*philosophers[i])) != 0)
-			return (1);
-		(*philosophers)->index = i + 1;
-		i++;
-	}
-	return (0);
-}
-
-void lets_eat(void *arg)
+void *lets_eat(void *arg)
 {
 	t_philosopher *philosopher;
 
@@ -92,14 +87,38 @@ void lets_eat(void *arg)
 
 }
 
+int init_philosophers(t_info *info, t_philosopher **philosophers)
+{
+	int i;
+
+	*philosophers = malloc(sizeof(t_philosopher) * info->num_of_philos);
+	if (!*philosophers)
+		return (1);
+	i = 0;
+	while (i < info->num_of_philos)
+	{
+		(*philosophers)[i].index = i + 1;
+		(*philosophers)[i].left_fork = i;
+		(*philosophers)[i].right_fork = i + 1;
+		(*philosophers)[i].status = LIVE;
+		(*philosophers)[i].eat_count = 0;
+		(*philosophers)[i].last_time_eat = get_time();
+		(*philosophers)[i].info = info;
+		if (pthread_create(&(*philosophers[i]).thread, NULL, \
+		lets_eat, &(*philosophers[i])) != 0)
+			return (1);
+		if (pthread_detach((*philosophers)[i].thread) != 0)
+			return (1);
+	}
+	return (0);
+}
+
 void keep_an_eye_on(t_info *info)
 {
-
 }
 
 void free_all(t_info *info)
 {
-
 }
 
 int main(int ac, char **av)
