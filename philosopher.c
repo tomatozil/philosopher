@@ -66,6 +66,7 @@ int init_info(int ac, char **av, t_info *info)
 		info->num_of_must_eat = NONE;
 	if (check_info(info) == 1)
 		return (1);
+	info->someone_dead = NO;
 	i = 0;
 	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
 	if (!info->fork_mutex)
@@ -81,33 +82,50 @@ int init_info(int ac, char **av, t_info *info)
 
 void *lets_eat(void *arg)
 {
-	t_philosopher *philosopher;
+	t_philosopher *philo;
+	t_info *info;
 
-	philosopher = (t_philosopher *)arg;
-
+	philo = (t_philosopher *)arg;
+	info = philo->info;
+	while (1)
+	{
+		if (philo->eat_count == info->num_of_must_eat)
+			break ;
+		pthread_mutex_lock(&info->check_mutex);
+		if (info->someone_dead == YES)
+			break ;
+		pthread_mutex_unlock(&info->check_mutex);
+		if (philo->status == LIVE)
+		{
+			eat_play_love();
+			sleep_play_love();
+			think_play_love();
+		}
+		pthread_mutex_unlock(&info->check_mutex);
+	}
 }
 
-int init_philosophers(t_info *info, t_philosopher **philosophers)
+int init_philosophers(t_info *info, t_philosopher **philo)
 {
 	int i;
 
-	*philosophers = malloc(sizeof(t_philosopher) * info->num_of_philos);
+	*philo = malloc(sizeof(t_philosopher) * info->num_of_philos);
 	if (!*philosophers)
 		return (1);
-	i = 0;
-	while (i < info->num_of_philos)
+	i = -1;
+	while (++i < info->num_of_philos)
 	{
-		(*philosophers)[i].index = i + 1;
-		(*philosophers)[i].left_fork = i;
-		(*philosophers)[i].right_fork = i + 1;
-		(*philosophers)[i].status = LIVE;
-		(*philosophers)[i].eat_count = 0;
-		(*philosophers)[i].last_time_eat = get_time();
-		(*philosophers)[i].info = info;
-		if (pthread_create(&(*philosophers[i]).thread, NULL, \
-		lets_eat, &(*philosophers[i])) != 0)
+		(*philo)[i].index = i + 1;
+		(*philo)[i].left_fork = i;
+		(*philo)[i].right_fork = i + 1;
+		(*philo)[i].status = LIVE;
+		(*philo)[i].eat_count = 0;
+		(*philo)[i].last_time_eat = get_time();
+		(*philo)[i].info = info;
+		if (pthread_create(&(*philo[i]).thread, NULL, \
+		lets_eat, &(*philo[i])) != 0)
 			return (1);
-		if (pthread_detach((*philosophers)[i].thread) != 0)
+		if (pthread_detach((*philo)[i].thread) != 0)
 			return (1);
 	}
 	return (0);
@@ -124,13 +142,13 @@ void free_all(t_info *info)
 int main(int ac, char **av)
 {
 	t_info info;
-	t_philosopher *philosophers;
+	t_philosopher *philo;
 
 	if (ac < 5)
 		return (error_return());
 	if (init_info(ac, av, &info) == 1)
 		return (error_return());
-	if (init_philosophers(&info, &philosophers) == 1)
+	if (init_philosophers(&info, &philo) == 1)
 		return (error_return());
 	keep_an_eye_on(&info);
 	free_all(&info);

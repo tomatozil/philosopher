@@ -16,6 +16,7 @@ typedef struct s_info
 	int time_to_eat;
 	int time_to_sleep;
 	int num_of_must_eat;
+	int someone_dead;
 	pthread_mutex_t *fork_mutex; //fork_mutex(mutex) list
 	pthread_mutex_t print_mutex;
 	pthread_mutex_t check_mutex;
@@ -45,6 +46,8 @@ typedef enum s_stauts
 typedef enum s_report
 {
 	NONE = -1,
+	NO,
+	YES,
 };
 
 #endif
