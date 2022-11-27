@@ -67,16 +67,14 @@ int init_info(int ac, char **av, t_info *info)
 	if (check_info(info) == 1)
 		return (1);
 	info->someone_dead = NO;
-	i = 0;
+	info->start_time = get_time();
 	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
 	if (!info->fork_mutex)
 		return (1);
-	while (i < info->num_of_philos)
-	{
+	i = -1;
+	while (++i < info->num_of_philos)
 		if (pthread_mutex_init(&info->fork_mutex[i], NULL) != 0)
 			return (1);
-		i++;
-	}
 	return (0);
 }
 
@@ -92,18 +90,32 @@ int someone_dead(t_philosopher *philo)
 	return (NO);
 }
 
-void print_status(t_philosopher *philo)
+void print_status(t_philosopher *philo, char *str)
 {
 	t_info	*info;
+	long cur_timestamp;
 
 	info = philo->info;
+	cur_timestamp = get_time() - info->start_time;
 	pthread_mutex_lock(&info->print_mutex);
 	if (someone_dead(philo) == YES)
 	{
 		pthread_mutex_unlock(&info->print_mutex);
 		return ;
 	}
-	printf()
+	printf("%ld %d %s", cur_timestamp, philo->index, str);
+	pthread_mutex_unlock(&info->print_mutex);
+}
+
+void delay_time(int during_time)
+{
+	long target_time;
+	long cur_time;
+
+	cur_time = get_time();
+	target_time = cur_time + during_time;
+	while (target_time > cur_time)
+		usleep(100);
 }
 
 void eating(t_philosopher *philo)
@@ -112,7 +124,29 @@ void eating(t_philosopher *philo)
 
 	info = philo->info;
 	pthread_mutex_lock(&info->fork_mutex[philo->left_fork]);
-	print_status()
+	print_status(philo, "has taken a fork");
+	pthread_mutex_lock(&info->fork_mutex[philo->right_fork]);
+	print_status(philo, "has taken a fork");
+	print_status(philo, "is eating");
+	delay_time(info->time_to_eat);
+	philo->last_time_eat = get_time();
+	philo->eat_count++;
+	philo->status = SLEEP;
+	pthread_mutex_unlock(&info->fork_mutex[philo->left_fork]);
+	pthread_mutex_unlock(&info->fork_mutex[philo->right_fork]);
+}
+
+void sleeping(t_philosopher *philo)
+{
+	print_status(philo, "is sleeping");
+	delay_time(philo->info->time_to_sleep);
+	philo->status = THINK;
+}
+
+void thinking(t_philosopher *philo)
+{
+	print_status(philo, "is thinking");
+	philo->status = EAT;
 }
 
 void *lets_eat(void *arg)

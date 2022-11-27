@@ -17,6 +17,7 @@ typedef struct s_info
 	int time_to_sleep;
 	int num_of_must_eat;
 	int someone_dead;
+	long start_time;
 	pthread_mutex_t *fork_mutex; //fork_mutex(mutex) list
 	pthread_mutex_t print_mutex;
 	pthread_mutex_t check_mutex;
