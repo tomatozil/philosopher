@@ -80,28 +80,59 @@ int init_info(int ac, char **av, t_info *info)
 	return (0);
 }
 
+int someone_dead(t_philosopher *philo)
+{
+	pthread_mutex_lock(&philo->info->check_mutex);
+	if (philo->info->someone_dead == YES)
+	{
+		pthread_mutex_unlock(&philo->info->check_mutex);
+		return (YES);
+	}
+	pthread_mutex_unlock(&philo->info->check_mutex);
+	return (NO);
+}
+
+void print_status(t_philosopher *philo)
+{
+	t_info	*info;
+
+	info = philo->info;
+	pthread_mutex_lock(&info->print_mutex);
+	if (someone_dead(philo) == YES)
+	{
+		pthread_mutex_unlock(&info->print_mutex);
+		return ;
+	}
+	printf()
+}
+
+void eating(t_philosopher *philo)
+{
+	t_info	*info;
+
+	info = philo->info;
+	pthread_mutex_lock(&info->fork_mutex[philo->left_fork]);
+	print_status()
+}
+
 void *lets_eat(void *arg)
 {
 	t_philosopher *philo;
-	t_info *info;
 
 	philo = (t_philosopher *)arg;
-	info = philo->info;
 	while (1)
 	{
-		if (philo->eat_count == info->num_of_must_eat)
+		if (philo->eat_count == philo->info->num_of_must_eat)
 			break ;
-		pthread_mutex_lock(&info->check_mutex);
-		if (info->someone_dead == YES)
+		if (someone_dead(philo) == YES)
 			break ;
-		pthread_mutex_unlock(&info->check_mutex);
-		if (philo->status == LIVE)
-		{
-			eat_play_love();
-			sleep_play_love();
-			think_play_love();
-		}
-		pthread_mutex_unlock(&info->check_mutex);
+		eating(philo);
+		if (someone_dead(philo) == YES)
+			break ;
+		sleeping(philo);
+		if (someone_dead(philo) == YES)
+			break ;
+		thinking(philo);
 	}
 }
 
@@ -110,7 +141,7 @@ int init_philosophers(t_info *info, t_philosopher **philo)
 	int i;
 
 	*philo = malloc(sizeof(t_philosopher) * info->num_of_philos);
-	if (!*philosophers)
+	if (!*philo)
 		return (1);
 	i = -1;
 	while (++i < info->num_of_philos)
@@ -118,7 +149,7 @@ int init_philosophers(t_info *info, t_philosopher **philo)
 		(*philo)[i].index = i + 1;
 		(*philo)[i].left_fork = i;
 		(*philo)[i].right_fork = i + 1;
-		(*philo)[i].status = LIVE;
+		(*philo)[i].status = i % 2; //EAT or SLEEP
 		(*philo)[i].eat_count = 0;
 		(*philo)[i].last_time_eat = get_time();
 		(*philo)[i].info = info;
