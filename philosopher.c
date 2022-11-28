@@ -78,15 +78,15 @@ int init_info(int ac, char **av, t_info *info)
 	return (0);
 }
 
-int someone_dead(t_philosopher *philo)
+int someone_dead(t_info *info)
 {
-	pthread_mutex_lock(&philo->info->check_mutex);
-	if (philo->info->someone_dead == YES)
+	pthread_mutex_lock(&info->check_mutex);
+	if (info->someone_dead == YES)
 	{
-		pthread_mutex_unlock(&philo->info->check_mutex);
+		pthread_mutex_unlock(&info->check_mutex);
 		return (YES);
 	}
-	pthread_mutex_unlock(&philo->info->check_mutex);
+	pthread_mutex_unlock(&info->check_mutex);
 	return (NO);
 }
 
@@ -98,7 +98,7 @@ void print_status(t_philosopher *philo, char *str)
 	info = philo->info;
 	cur_timestamp = get_time() - info->start_time;
 	pthread_mutex_lock(&info->print_mutex);
-	if (someone_dead(philo) == YES)
+	if (someone_dead(info) == YES)
 	{
 		pthread_mutex_unlock(&info->print_mutex);
 		return ;
@@ -124,10 +124,10 @@ void eating(t_philosopher *philo)
 
 	info = philo->info;
 	pthread_mutex_lock(&info->fork_mutex[philo->left_fork]);
-	print_status(philo, "has taken a fork");
+	print_status(philo, "has taken a fork\n");
 	pthread_mutex_lock(&info->fork_mutex[philo->right_fork]);
-	print_status(philo, "has taken a fork");
-	print_status(philo, "is eating");
+	print_status(philo, "has taken a fork\n");
+	print_status(philo, "is eating\n");
 	delay_time(info->time_to_eat);
 	philo->last_time_eat = get_time();
 	philo->eat_count++;
@@ -138,33 +138,35 @@ void eating(t_philosopher *philo)
 
 void sleeping(t_philosopher *philo)
 {
-	print_status(philo, "is sleeping");
+	print_status(philo, "is sleeping\n");
 	delay_time(philo->info->time_to_sleep);
 	philo->status = THINK;
 }
 
 void thinking(t_philosopher *philo)
 {
-	print_status(philo, "is thinking");
+	print_status(philo, "is thinking\n");
 	philo->status = EAT;
 }
 
 void *lets_eat(void *arg)
 {
 	t_philosopher *philo;
+	t_info *info;
 
 	philo = (t_philosopher *)arg;
+	info = philo->info;
 	while (1)
 	{
-		if (philo->eat_count == philo->info->num_of_must_eat)
+		if (philo->eat_count == info->num_of_must_eat)
 			break ;
-		if (someone_dead(philo) == YES)
+		if (someone_dead(info) == YES)
 			break ;
 		eating(philo);
-		if (someone_dead(philo) == YES)
+		if (someone_dead(info) == YES)
 			break ;
 		sleeping(philo);
-		if (someone_dead(philo) == YES)
+		if (someone_dead(info) == YES)
 			break ;
 		thinking(philo);
 	}
@@ -183,7 +185,7 @@ int init_philosophers(t_info *info, t_philosopher **philo)
 		(*philo)[i].index = i + 1;
 		(*philo)[i].left_fork = i;
 		(*philo)[i].right_fork = i + 1;
-		(*philo)[i].status = i % 2; //EAT or SLEEP
+		(*philo)[i].status = LIVE;
 		(*philo)[i].eat_count = 0;
 		(*philo)[i].last_time_eat = get_time();
 		(*philo)[i].info = info;
@@ -196,12 +198,28 @@ int init_philosophers(t_info *info, t_philosopher **philo)
 	return (0);
 }
 
-void keep_an_eye_on(t_info *info)
+void keep_an_eye_on(t_info *info, t_philosopher **philo)
 {
+	int i;
+
+	// 죽었는지 먼저 검사
+	i = -1;
+	while (++i < info->num_of_philos)
+	{
+		if (get_time() - (*philo)[i].last_time_eat > info->time_to_die)
+		{
+			pthread_mutex_lock(&info->check_mutex);
+			(*philo)[i].status = DEAD;
+			info->someone_dead = YES;
+			print_status(&(*philo)[i], "is dead.\n");
+		}
+	}
+	//
 }
 
 void free_all(t_info *info)
 {
+
 }
 
 int main(int ac, char **av)
@@ -215,7 +233,7 @@ int main(int ac, char **av)
 		return (error_return());
 	if (init_philosophers(&info, &philo) == 1)
 		return (error_return());
-	keep_an_eye_on(&info);
+	keep_an_eye_on(&info, &philo);
 	free_all(&info);
 	return (0);
 }

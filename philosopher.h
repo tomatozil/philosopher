@@ -41,7 +41,7 @@ typedef enum s_stauts
 	SLEEP,
 	THINK,
 	LIVE,
-	DIE
+	DEAD
 }	t_status;
 
 typedef enum s_report
