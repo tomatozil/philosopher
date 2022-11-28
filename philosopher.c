@@ -67,6 +67,7 @@ int init_info(int ac, char **av, t_info *info)
 	if (check_info(info) == 1)
 		return (1);
 	info->someone_dead = NO;
+	info->num_of_full = 0;
 	info->start_time = get_time();
 	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
 	if (!info->fork_mutex)
@@ -78,16 +79,25 @@ int init_info(int ac, char **av, t_info *info)
 	return (0);
 }
 
-int someone_dead(t_info *info)
+/* 이거 구림 */
+int check_someone_dead(t_info *info)
 {
 	pthread_mutex_lock(&info->check_mutex);
 	if (info->someone_dead == YES)
 	{
 		pthread_mutex_unlock(&info->check_mutex);
-		return (YES);
+		return (1);
 	}
 	pthread_mutex_unlock(&info->check_mutex);
-	return (NO);
+	return (0);
+}
+
+void check_philo_full(t_info *info, t_philosopher *philo)
+{
+	pthread_mutex_lock(&info->check_mutex);
+	if (philo->eat_count == info->must_eat_count)
+		info->num_of_full++;
+	pthread_mutex_unlock(&info->check_mutex);
 }
 
 void print_status(t_philosopher *philo, char *str)
@@ -98,7 +108,7 @@ void print_status(t_philosopher *philo, char *str)
 	info = philo->info;
 	cur_timestamp = get_time() - info->start_time;
 	pthread_mutex_lock(&info->print_mutex);
-	if (someone_dead(info) == YES)
+	if (check_someone_dead(info) == 1)
 	{
 		pthread_mutex_unlock(&info->print_mutex);
 		return ;
@@ -160,16 +170,17 @@ void *lets_eat(void *arg)
 	{
 		if (philo->eat_count == info->num_of_must_eat)
 			break ;
-		if (someone_dead(info) == YES)
+		if (check_someone_dead(info) == 1)
 			break ;
 		eating(philo);
-		if (someone_dead(info) == YES)
+		if (check_someone_dead(info) == 1)
 			break ;
 		sleeping(philo);
-		if (someone_dead(info) == YES)
+		if (check_someone_dead(info) == 1)
 			break ;
 		thinking(philo);
 	}
+	check_philo_full(info, philo);
 }
 
 int init_philosophers(t_info *info, t_philosopher **philo)
@@ -202,24 +213,60 @@ void keep_an_eye_on(t_info *info, t_philosopher **philo)
 {
 	int i;
 
-	// 죽었는지 먼저 검사
+	while (1)
+	{
+		// 다들 먹을만큼 먹었는지 검사
+		pthread_mutex_lock(&info->check_mutex);
+		if (info->num_of_full == info->num_of_philos)
+		{
+			printf("all philosophers are full\n")
+			pthread_mutex_unlock(&info->check_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&info->check_mutex);
+		// 죽은 사람 있는지 검사
+		i = -1;
+		while (++i < info->num_of_philos)
+		{
+			if (get_time() - (*philo)[i].last_time_eat > info->time_to_die)
+			{
+				pthread_mutex_lock(&info->check_mutex);
+				(*philo)[i].status = DEAD;
+				info->someone_dead = YES;
+				pthread_mutex_unlock(&info->check_mutex);
+				print_status(&(*philo)[i], "is dead.\n");
+				// 포크를 아직 갖고있을 수 있으니까 내려놔? -> 놉 뒤에서 free 다 해줄건디 뭐
+				return;
+			}
+		}
+	}
+}
+
+void free_all(t_info *info, t_philosopher *philos)
+{
+	int	i;
+
 	i = -1;
 	while (++i < info->num_of_philos)
 	{
-		if (get_time() - (*philo)[i].last_time_eat > info->time_to_die)
+		if (pthread_mutex_destroy(&info->fork_mutex[i]) != 0)
 		{
-			pthread_mutex_lock(&info->check_mutex);
-			(*philo)[i].status = DEAD;
-			info->someone_dead = YES;
-			print_status(&(*philo)[i], "is dead.\n");
+			pthread_mutex_unlock(&info->fork_mutex[i]);
+			pthread_mutex_destroy(&info->fork_mutex[i]);
 		}
 	}
-	//
-}
-
-void free_all(t_info *info)
-{
-
+	if (pthread_mutex_destroy(&info->print_mutex) != 0)
+	{
+		pthread_mutex_unlock(&info->print_mutex);
+		pthread_mutex_destroy(&info->print_mutex);
+	}
+	if (pthread_mutex_destroy(&info->check_mutex) != 0)
+	{
+		pthread_mutex_unlock(&info->check_mutex);
+		pthread_mutex_destroy(&info->check_mutex);
+	}
+	free(info->fork_mutex);
+	free(philos);
 }
 
 int main(int ac, char **av)
@@ -234,6 +281,6 @@ int main(int ac, char **av)
 	if (init_philosophers(&info, &philo) == 1)
 		return (error_return());
 	keep_an_eye_on(&info, &philo);
-	free_all(&info);
+	free_all(&info, philo);
 	return (0);
 }
