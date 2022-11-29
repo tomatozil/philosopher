@@ -42,7 +42,8 @@ typedef enum s_stauts
 	SLEEP,
 	THINK,
 	LIVE,
-	DEAD
+	DEAD,
+	FULL
 }	t_status;
 
 typedef enum s_report
@@ -50,6 +51,6 @@ typedef enum s_report
 	NONE = -1,
 	NO,
 	YES,
-};
+} t_report;
 
 #endif
