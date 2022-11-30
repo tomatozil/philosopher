@@ -8,7 +8,6 @@
 # include <sys/time.h>
 # include <pthread.h>
 
-
 typedef struct s_info
 {
 	int num_of_philos;
@@ -36,21 +35,40 @@ typedef struct s_philosopher
 	pthread_t thread;
 }	t_philosopher;
 
-typedef enum s_stauts
+typedef enum e_stauts
 {
 	EAT,
 	SLEEP,
 	THINK,
-	LIVE,
 	DEAD,
 	FULL
 }	t_status;
 
-typedef enum s_report
+typedef enum e_report
 {
 	NONE = -1,
 	NO,
 	YES,
 } t_report;
+
+/* init.c */
+int init_info(int ac, char **av, t_info *info);
+int init_philosophers(t_info *info, t_philosopher **philo);
+
+/* lets_eat.c */
+void *lets_eat(void *arg);
+
+/* time.c */
+void delay_time(long during_time);
+long get_time(void);
+
+/* utils.c */
+int	ft_atoi(char *str);
+int check_someone_dead(t_info *info);
+void print_status(t_philosopher *philo, char *str);
+int error_return(void);
+
+/* free.c */
+void free_all(t_info *info, t_philosopher *philo);
 
 #endif
