@@ -17,7 +17,7 @@ int	check_info(t_info *info)
 	info->time_to_eat < 0 || info->time_to_sleep < 0)
 		return (1);
 	if (info->num_of_must_eat != NONE)
-		if (info->time_to_sleep < 0)
+		if (info->num_of_must_eat < 0)
 			return (1);
 	return (0);
 }
