@@ -1,9 +1,17 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lets_eat.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:00:18 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:00:22 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher.h"
 
-void eating(t_philosopher *philo)
+void	eating(t_philosopher *philo)
 {
 	t_info	*info;
 
@@ -29,23 +37,23 @@ void eating(t_philosopher *philo)
 	pthread_mutex_unlock(&info->fork_mutex[philo->left_fork]);
 }
 
-void sleeping(t_philosopher *philo)
+void	sleeping(t_philosopher *philo)
 {
 	print_status(philo, "is sleeping\n");
 	delay_time(philo->info->time_to_sleep);
 	philo->status = THINK;
 }
 
-void thinking(t_philosopher *philo)
+void	thinking(t_philosopher *philo)
 {
 	print_status(philo, "is thinking\n");
 	philo->status = EAT;
 }
 
-void *lets_eat(void *arg)
+void	*lets_eat(void *arg)
 {
-	t_philosopher *philo;
-	t_info *info;
+	t_philosopher	*philo;
+	t_info			*info;
 
 	philo = (t_philosopher *)arg;
 	info = philo->info;

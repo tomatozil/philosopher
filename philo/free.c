@@ -1,9 +1,17 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 18:59:52 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 18:59:57 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher.h"
 
-void wait_thread_join(t_info *info, t_philosopher *philo)
+void	wait_thread_join(t_info *info, t_philosopher *philo)
 {
 	int	i;
 
@@ -12,9 +20,9 @@ void wait_thread_join(t_info *info, t_philosopher *philo)
 		pthread_join(philo[i].thread, NULL);
 }
 
-void forks_free(t_info *info)
+void	forks_free(t_info *info)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < info->num_of_philos)
@@ -27,7 +35,7 @@ void forks_free(t_info *info)
 	}
 }
 
-void free_all(t_info *info, t_philosopher *philo)
+void	free_all(t_info *info, t_philosopher *philo)
 {
 	if (info->num_of_philos != 1)
 		wait_thread_join(info, philo);

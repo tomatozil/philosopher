@@ -1,9 +1,17 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:01:52 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:01:56 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher_bonus.h"
 
-int check_info(t_info *info)
+int	check_info(t_info *info)
 {
 	if (info->num_of_philos < 0 || info->time_to_die < 0 || \
 	info->time_to_eat < 0 || info->time_to_sleep < 0)
@@ -14,23 +22,27 @@ int check_info(t_info *info)
 	return (0);
 }
 
-void init_sem(t_info *info)
+void	init_sem(t_info *info)
 {
-	info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, 0644, (unsigned int)info->num_of_philos);
+	info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, \
+	0644, (unsigned int)info->num_of_philos);
 	if (info->forks_sem == SEM_FAILED)
 	{
 		sem_unlink("forks_sem");
-		info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, 0644, (unsigned int)info->num_of_philos);
+		info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, \
+		0644, (unsigned int)info->num_of_philos);
 	}
-	info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, 0644, (unsigned int)1);
+	info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, \
+	0644, (unsigned int)1);
 	if (info->print_sem == SEM_FAILED)
 	{
 		sem_unlink("print_sem");
-		info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, 0644, (unsigned int)1);
+		info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, \
+		0644, (unsigned int)1);
 	}
 }
 
-int init_info(int ac, char **av, t_info *info)
+int	init_info(int ac, char **av, t_info *info)
 {
 	info->num_of_philos = ft_atoi(av[1]);
 	info->time_to_die = ft_atoi(av[2]);
@@ -49,9 +61,9 @@ int init_info(int ac, char **av, t_info *info)
 	return (0);
 }
 
-int init_process(t_info *info, t_philosopher **philo)
+int	init_process(t_info *info, t_philosopher **philo)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < info->num_of_philos)
@@ -65,9 +77,9 @@ int init_process(t_info *info, t_philosopher **philo)
 	return (0);
 }
 
-int init_philosophers(t_info *info, t_philosopher **philo)
+int	init_philosophers(t_info *info, t_philosopher **philo)
 {
-	int i;
+	int	i;
 
 	*philo = malloc(sizeof(t_philosopher) * info->num_of_philos);
 	if (!*philo)

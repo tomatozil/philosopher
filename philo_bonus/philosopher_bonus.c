@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosopher_bonus.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:02:07 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:02:10 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher_bonus.h"
 
-void keep_an_eye_on(t_info *info, t_philosopher **philo)
+void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 {
-	int i;
-	int status;
+	int	i;
+	int	status;
 
 	while (1)
 	{
@@ -20,21 +31,17 @@ void keep_an_eye_on(t_info *info, t_philosopher **philo)
 		{
 			info->num_of_full++;
 			if (info->num_of_full == info->num_of_philos)
-				break;
+				break ;
 		}
 	}
 	printf("%ld all philosophers full\n", get_time() - info->start_time);
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_info info;
-	t_philosopher *philo;
+	t_info			info;
+	t_philosopher	*philo;
 
-//	int ac = 6;
-//	char *av[6] = {"a.out", "4", "410", "200", "200", "2"};
-//	int ac = 5;
-//	char *av[6] = {"a.out", "199", "410", "200", "200"};
 	if (ac < 5)
 		return (error_return());
 	if (init_info(ac, av, &info) == 1)

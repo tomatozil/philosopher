@@ -1,6 +1,14 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:00:49 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:00:52 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher.h"
 
 int	ft_atoi(char *str)
@@ -30,7 +38,7 @@ int	ft_atoi(char *str)
 	return ((int)(ret * sign));
 }
 
-int check_someone_dead(t_info *info)
+int	check_someone_dead(t_info *info)
 {
 	pthread_mutex_lock(&info->check_mutex);
 	if (info->someone_dead == YES)
@@ -42,10 +50,10 @@ int check_someone_dead(t_info *info)
 	return (0);
 }
 
-void print_status(t_philosopher *philo, char *str)
+void	print_status(t_philosopher *philo, char *str)
 {
 	t_info	*info;
-	long cur_timestamp;
+	long	cur_timestamp;
 
 	info = philo->info;
 	cur_timestamp = get_time() - info->start_time;
@@ -59,7 +67,7 @@ void print_status(t_philosopher *philo, char *str)
 	pthread_mutex_unlock(&info->print_mutex);
 }
 
-int error_return(void)
+int	error_return(void)
 {
 	write(2, "error\n", 6);
 	return (1);

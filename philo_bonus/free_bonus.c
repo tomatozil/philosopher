@@ -1,11 +1,19 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:01:45 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:01:48 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher_bonus.h"
 
-void free_all(t_info *info, t_philosopher *philo)
+void	free_all(t_info *info, t_philosopher *philo)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < info->num_of_philos)

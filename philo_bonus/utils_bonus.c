@@ -1,6 +1,14 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:02:28 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:02:31 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher_bonus.h"
 
 int	ft_atoi(char *str)
@@ -30,29 +38,31 @@ int	ft_atoi(char *str)
 	return ((int)(ret * sign));
 }
 
-void *check_dead(void *arg)
+void	*check_dead(void *arg)
 {
-	t_philosopher *philo;
+	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
 	while (1)
 	{
-		if (philo->status != FULL && get_time() - philo->last_time_eat > philo->info->time_to_die)
+		if (philo->status != FULL && \
+		get_time() - philo->last_time_eat > philo->info->time_to_die)
 		{
 			sem_wait(philo->info->print_sem);
 			philo->status = DEAD;
 			philo->info->someone_dead = YES;
-			printf("%ld %d is dead.\n",get_time() - philo->info->start_time, philo->index);
+			printf("%ld %d is dead.\n", \
+			get_time() - philo->info->start_time, philo->index);
 			exit(DEAD);
 		}
 	}
 }
 
 /* print semaphore 필요할까나? -> 필요하다! */
-void print_status(t_philosopher *philo, char *str)
+void	print_status(t_philosopher *philo, char *str)
 {
 	t_info	*info;
-	long cur_timestamp;
+	long	cur_timestamp;
 
 	info = philo->info;
 	sem_wait(info->print_sem);
@@ -61,7 +71,7 @@ void print_status(t_philosopher *philo, char *str)
 	sem_post(info->print_sem);
 }
 
-int error_return(void)
+int	error_return(void)
 {
 	write(2, "error\n", 6);
 	return (1);

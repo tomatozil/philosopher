@@ -1,12 +1,20 @@
-//
-// Created by jiyun on 2022/11/30.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jiyun <jiyun@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/02 19:02:22 by jiyun             #+#    #+#             */
+/*   Updated: 2022/12/02 19:02:24 by jiyun            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "philosopher_bonus.h"
 
-void delay_time(long during_time)
+void	delay_time(long during_time)
 {
-	long target_time;
-	long cur_time;
+	long	target_time;
+	long	cur_time;
 
 	cur_time = get_time();
 	target_time = cur_time + during_time;
@@ -17,7 +25,7 @@ void delay_time(long during_time)
 	}
 }
 
-long get_time(void)
+long	get_time(void)
 {
 	struct timeval	time;
 
