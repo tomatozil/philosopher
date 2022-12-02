@@ -69,7 +69,10 @@ int	init_thread(t_info *info, t_philosopher **philo)
 	{
 		if (pthread_create(&(*philo)[i].thread, NULL, \
 		lets_eat, &(*philo)[i]) != 0)
+		{
+			free_all(info, *philo);
 			return (1);
+		}
 	}
 	return (0);
 }
