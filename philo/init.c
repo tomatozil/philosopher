@@ -3,7 +3,7 @@
 //
 #include "philosopher.h"
 
-int check_info(t_info *info)
+int	check_info(t_info *info)
 {
 	if (info->num_of_philos < 0 || info->time_to_die < 0 || \
 	info->time_to_eat < 0 || info->time_to_sleep < 0)
@@ -14,9 +14,9 @@ int check_info(t_info *info)
 	return (0);
 }
 
-int init_mutex(t_info *info)
+int	init_mutex(t_info *info)
 {
-	int i;
+	int	i;
 
 	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
 	if (!info->fork_mutex)
@@ -32,7 +32,7 @@ int init_mutex(t_info *info)
 	return (0);
 }
 
-int init_info(int ac, char **av, t_info *info)
+int	init_info(int ac, char **av, t_info *info)
 {
 	info->num_of_philos = ft_atoi(av[1]);
 	info->time_to_die = ft_atoi(av[2]);
@@ -47,14 +47,14 @@ int init_info(int ac, char **av, t_info *info)
 	info->someone_dead = NO;
 	info->num_of_full = 0;
 	info->start_time = get_time();
-	if(init_mutex(info) == 1)
+	if (init_mutex(info) == 1)
 		return (1);
 	return (0);
 }
 
-int init_thread(t_info *info, t_philosopher **philo)
+int	init_thread(t_info *info, t_philosopher **philo)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < info->num_of_philos)
@@ -62,23 +62,13 @@ int init_thread(t_info *info, t_philosopher **philo)
 		if (pthread_create(&(*philo)[i].thread, NULL, \
 		lets_eat, &(*philo)[i]) != 0)
 			return (1);
-//		if (pthread_detach((*philo)[i].thread) != 0)
-//			return (1);
 	}
 	return (0);
 }
 
-/*
-philo = 배열의 주소
-		*philo = 배열
-				**philo = 배열의 요소
-&(*philo[i])
-&(*philo)[i]
- */
-
-int init_philosophers(t_info *info, t_philosopher **philo)
+int	init_philosophers(t_info *info, t_philosopher **philo)
 {
-	int i;
+	int	i;
 
 	*philo = malloc(sizeof(t_philosopher) * info->num_of_philos);
 	if (!*philo)
@@ -94,7 +84,7 @@ int init_philosophers(t_info *info, t_philosopher **philo)
 		(*philo)[i].last_time_eat = get_time();
 		(*philo)[i].info = info;
 	}
-	(*philo)[i - 1].right_fork = 0; //마지막 사람의 오른쪽 포크 == 첫 사람의 왼쪽 포크
+	(*philo)[i - 1].right_fork = 0;
 	if (init_thread(info, philo) == 1)
 		return (1);
 	return (0);

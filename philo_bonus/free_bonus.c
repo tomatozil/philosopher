@@ -12,5 +12,7 @@ void free_all(t_info *info, t_philosopher *philo)
 		kill(philo[i].pid, SIGTERM);
 	sem_close(info->forks_sem);
 	sem_unlink("forks_sem");
+	sem_close(info->print_sem);
+	sem_unlink("print_sem");
 	free(philo);
 }

@@ -17,10 +17,7 @@ void eating(t_philosopher *philo)
 	delay_time(info->time_to_eat);
 	philo->eat_count++;
 	if (philo->eat_count == info->num_of_must_eat)
-	{
 		philo->status = FULL;
-		info->num_of_full++;
-	}
 	else
 		philo->status = SLEEP;
 	sem_post(info->forks_sem);

@@ -14,15 +14,20 @@ int check_info(t_info *info)
 	return (0);
 }
 
-int init_sem(t_info *info)
+void init_sem(t_info *info)
 {
-	info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, 0664, (unsigned int)info->num_of_philos);
+	info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, 0644, (unsigned int)info->num_of_philos);
 	if (info->forks_sem == SEM_FAILED)
 	{
 		sem_unlink("forks_sem");
-		return (1);
+		info->forks_sem = sem_open("forks_sem", O_CREAT | O_EXCL, 0644, (unsigned int)info->num_of_philos);
 	}
-	return (0);
+	info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, 0644, (unsigned int)1);
+	if (info->print_sem == SEM_FAILED)
+	{
+		sem_unlink("print_sem");
+		info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, 0644, (unsigned int)1);
+	}
 }
 
 int init_info(int ac, char **av, t_info *info)
@@ -40,8 +45,7 @@ int init_info(int ac, char **av, t_info *info)
 	info->someone_dead = NO;
 	info->num_of_full = 0;
 	info->start_time = get_time();
-	if (init_sem(info) == 1)
-		return (1);
+	init_sem(info);
 	return (0);
 }
 

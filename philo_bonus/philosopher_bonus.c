@@ -26,17 +26,17 @@ void keep_an_eye_on(t_info *info, t_philosopher **philo)
 	printf("%ld all philosophers full\n", get_time() - info->start_time);
 }
 
-int main(void)
+int main(int ac, char **av)
 {
 	t_info info;
 	t_philosopher *philo;
 
 //	int ac = 6;
 //	char *av[6] = {"a.out", "4", "410", "200", "200", "2"};
-	int ac = 5;
-	char *av[6] = {"a.out", "199", "410", "200", "200"};
-//	if (ac < 5)
-//		return (error_return());
+//	int ac = 5;
+//	char *av[6] = {"a.out", "199", "410", "200", "200"};
+	if (ac < 5)
+		return (error_return());
 	if (init_info(ac, av, &info) == 1)
 		return (error_return());
 	if (init_philosophers(&info, &philo) == 1)

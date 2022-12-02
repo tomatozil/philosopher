@@ -21,7 +21,7 @@ typedef struct s_info
 	int num_of_full;
 	long start_time;
 	sem_t *forks_sem; //fork_mutex(mutex) list
-//	sem_t print_mutex;
+	sem_t *print_sem;
 //	sem_t check_mutex    ;
 }	t_info;
 

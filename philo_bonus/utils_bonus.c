@@ -35,24 +35,30 @@ void *check_dead(void *arg)
 	t_philosopher *philo;
 
 	philo = (t_philosopher *)arg;
-	if (philo->status != FULL && get_time() - philo->last_time_eat > philo->info->time_to_die)
+	while (1)
 	{
-		philo->status = DEAD;
-		philo->info->someone_dead = YES;
-		printf("%d is dead.\n", philo->index);
-		exit(DEAD);
+		if (philo->status != FULL && get_time() - philo->last_time_eat > philo->info->time_to_die)
+		{
+			sem_wait(philo->info->print_sem);
+			philo->status = DEAD;
+			philo->info->someone_dead = YES;
+			printf("%ld %d is dead.\n",get_time() - philo->info->start_time, philo->index);
+			exit(DEAD);
+		}
 	}
 }
 
-/* print semaphore 필요할까나? */
+/* print semaphore 필요할까나? -> 필요하다! */
 void print_status(t_philosopher *philo, char *str)
 {
 	t_info	*info;
 	long cur_timestamp;
 
 	info = philo->info;
+	sem_wait(info->print_sem);
 	cur_timestamp = get_time() - info->start_time;
 	printf("%ld %d %s", cur_timestamp, philo->index, str);
+	sem_post(info->print_sem);
 }
 
 int error_return(void)
