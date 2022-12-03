@@ -37,18 +37,20 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 		while (++i < info->num_of_philos)
 		{
 			pthread_mutex_lock(&info->check_mutex);
-			if ((*philo)[i].status != FULL && \
-			get_time() - (*philo)[i].last_time_eat > info->time_to_die)
+//			(*philo)[i].is_full == NO &&
+			if (get_time() - (*philo)[i].last_time_eat > info->time_to_die)
 			{
-				(*philo)[i].status = DEAD;
 				info->someone_dead = YES;
+				pthread_mutex_lock(&info->print_mutex);
 				printf("%ld %d is dead.\n", \
 				get_time() - info->start_time, (&(*philo)[i])->index);
+				pthread_mutex_unlock(&info->print_mutex);
 				pthread_mutex_unlock(&info->check_mutex);
 				return ;
 			}
 			pthread_mutex_unlock(&info->check_mutex);
 		}
+		usleep(100);
 	}
 }
 

@@ -26,15 +26,15 @@ void	eating(t_philosopher *philo)
 	pthread_mutex_unlock(&info->check_mutex);
 	delay_time(info->time_to_eat);
 	philo->eat_count++;
-	pthread_mutex_lock(&info->check_mutex);
 	if (philo->eat_count == info->num_of_must_eat)
 	{
-		philo->status = FULL;
+		pthread_mutex_lock(&info->check_mutex);
 		info->num_of_full++;
+		pthread_mutex_unlock(&info->check_mutex);
+		philo->status = FULL;
 	}
 	else
 		philo->status = SLEEP;
-	pthread_mutex_unlock(&info->check_mutex);
 	pthread_mutex_unlock(&info->fork_mutex[philo->right_fork]);
 	pthread_mutex_unlock(&info->fork_mutex[philo->left_fork]);
 }
@@ -43,17 +43,13 @@ void	sleeping(t_philosopher *philo)
 {
 	print_status(philo, "is sleeping\n");
 	delay_time(philo->info->time_to_sleep);
-	pthread_mutex_lock(&philo->info->check_mutex);
 	philo->status = THINK;
-	pthread_mutex_unlock(&philo->info->check_mutex);
 }
 
 void	thinking(t_philosopher *philo)
 {
 	print_status(philo, "is thinking\n");
-	pthread_mutex_lock(&philo->info->check_mutex);
 	philo->status = EAT;
-	pthread_mutex_unlock(&philo->info->check_mutex);
 }
 
 void	*lets_eat(void *arg)
@@ -75,7 +71,7 @@ void	*lets_eat(void *arg)
 			sleeping(philo);
 		else if (philo->status == THINK)
 			thinking(philo);
-		else if (philo->status == FULL || philo->status == DEAD)
+		else if (philo->status == FULL)
 			break ;
 	}
 	return (NULL);
