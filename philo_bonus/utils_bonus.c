@@ -45,7 +45,8 @@ void	*check_dead(void *arg)
 	philo = (t_philosopher *)arg;
 	while (1)
 	{
-		sem_wait(philo->info->check_sem);
+//		sem_wait(philo->info->check_sem);
+		pthread_mutex_lock(&philo->mutex);
 		if (get_time() - philo->last_time_eat > philo->info->time_to_die)
 		{
 			sem_wait(philo->info->print_sem);
@@ -53,7 +54,8 @@ void	*check_dead(void *arg)
 			get_time() - philo->info->start_time, philo->index);
 			exit(DEAD);
 		}
-		sem_post(philo->info->check_sem);
+		pthread_mutex_unlock(&philo->mutex);
+//		sem_post(philo->info->check_sem);
 	}
 }
 

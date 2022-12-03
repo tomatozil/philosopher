@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror #-g3 -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=thread
 
 NAME = philo_bonus
 SRCS = free_bonus.c \

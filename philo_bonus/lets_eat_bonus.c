@@ -11,9 +11,8 @@
 /* ************************************************************************** */
 #include "philosopher_bonus.h"
 
-void	eating(t_philosopher *philo)
-{
-	t_info	*info;
+void	eating(t_philosopher *philo) {
+	t_info *info;
 
 	info = philo->info;
 	sem_wait(info->forks_sem);
@@ -21,19 +20,23 @@ void	eating(t_philosopher *philo)
 	sem_wait(info->forks_sem);
 	print_status(philo, "has taken a right fork\n");
 	print_status(philo, "is eating\n");
-	sem_wait(info->check_sem);
-	printf("%d: hinghing\n", philo->index);
+//	sem_wait(info->check_sem);
+	pthread_mutex_lock(&philo->mutex);
 	philo->last_time_eat = get_time();
-	sem_post(info->check_sem);
+	pthread_mutex_unlock(&philo->mutex);
+//	sem_post(info->check_sem);
 	delay_time(info->time_to_eat);
 	philo->eat_count++;
 	if (philo->eat_count == info->num_of_must_eat)
+	{
+		sem_wait(info->check_sem);
 		philo->status = FULL;
+		sem_post(info->check_sem);
+	}
 	else
 		philo->status = SLEEP;
 	sem_post(info->forks_sem);
 	sem_post(info->forks_sem);
-	printf("%d: hinguhingu\n", philo->index);
 }
 
 void	sleeping(t_philosopher *philo)
@@ -54,10 +57,11 @@ int	lets_eat(t_philosopher *philo)
 	t_info		*info;
 	pthread_t	thread;
 
+	pthread_mutex_init(&philo->mutex, NULL);
 	info = philo->info;
 	if (pthread_create(&thread, NULL, check_dead, philo) != 0)
 		exit (1);
-	//detach
+	pthread_detach(thread);
 	if (philo->index % 2 != 0)
 		delay_time(info->time_to_eat / 2);
 	while (1)
@@ -70,11 +74,7 @@ int	lets_eat(t_philosopher *philo)
 			thinking(philo);
 		sem_wait(philo->info->check_sem);
 		if (philo->status == FULL)
-		{
-			printf("%d: IMFULL\n", philo->index);
-			sem_post(philo->info->check_sem);
 			exit (FULL);
-		}
 		sem_post(philo->info->check_sem);
 	}
 }
