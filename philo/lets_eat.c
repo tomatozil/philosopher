@@ -21,7 +21,9 @@ void	eating(t_philosopher *philo)
 	pthread_mutex_lock(&info->fork_mutex[philo->right_fork]);
 	print_status(philo, "has taken a right fork\n");
 	print_status(philo, "is eating\n");
+	pthread_mutex_lock(&info->check_mutex);
 	philo->last_time_eat = get_time();
+	pthread_mutex_unlock(&info->check_mutex);
 	delay_time(info->time_to_eat);
 	philo->eat_count++;
 	pthread_mutex_lock(&info->check_mutex);
@@ -41,13 +43,17 @@ void	sleeping(t_philosopher *philo)
 {
 	print_status(philo, "is sleeping\n");
 	delay_time(philo->info->time_to_sleep);
+	pthread_mutex_lock(&philo->info->check_mutex);
 	philo->status = THINK;
+	pthread_mutex_unlock(&philo->info->check_mutex);
 }
 
 void	thinking(t_philosopher *philo)
 {
 	print_status(philo, "is thinking\n");
+	pthread_mutex_lock(&philo->info->check_mutex);
 	philo->status = EAT;
+	pthread_mutex_unlock(&philo->info->check_mutex);
 }
 
 void	*lets_eat(void *arg)
@@ -58,7 +64,7 @@ void	*lets_eat(void *arg)
 	philo = (t_philosopher *)arg;
 	info = philo->info;
 	if (philo->index % 2 == 0)
-		delay_time(info->time_to_eat - 10);
+		delay_time(info->time_to_eat / 2);
 	while (1)
 	{
 		if (check_someone_dead(info) == 1)

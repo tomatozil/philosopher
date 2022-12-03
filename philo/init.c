@@ -25,18 +25,25 @@ int	check_info(t_info *info)
 int	init_mutex(t_info *info)
 {
 	int	i;
+	int	status;
 
+	status = YES;
 	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->num_of_philos);
 	if (!info->fork_mutex)
 		return (1);
 	i = -1;
 	while (++i < info->num_of_philos)
 		if (pthread_mutex_init(&info->fork_mutex[i], NULL) != 0)
-			return (1);
+			status = NO;
 	if (pthread_mutex_init(&info->print_mutex, NULL) != 0)
-		return (1);
+		status = NO;
 	if (pthread_mutex_init(&info->check_mutex, NULL) != 0)
+		status = NO;
+	if (status == NO)
+	{
+		free_all(info, NULL);
 		return (1);
+	}
 	return (0);
 }
 

@@ -58,10 +58,7 @@ void	print_status(t_philosopher *philo, char *str)
 	info = philo->info;
 	cur_timestamp = get_time() - info->start_time;
 	if (check_someone_dead(info) == 1)
-	{
-		pthread_mutex_unlock(&info->print_mutex);
 		return ;
-	}
 	pthread_mutex_lock(&info->print_mutex);
 	printf("%ld %d %s", cur_timestamp, philo->index, str);
 	pthread_mutex_unlock(&info->print_mutex);

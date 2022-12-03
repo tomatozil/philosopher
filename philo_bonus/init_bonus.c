@@ -40,6 +40,14 @@ void	init_sem(t_info *info)
 		info->print_sem = sem_open("print_sem", O_CREAT | O_EXCL, \
 		0644, (unsigned int)1);
 	}
+	info->check_sem = sem_open("check_sem", O_CREAT | O_EXCL, \
+	0644, (unsigned int)1);
+	if (info->print_sem == SEM_FAILED)
+	{
+		sem_unlink("check_sem");
+		info->check_sem = sem_open("check_sem", O_CREAT | O_EXCL, \
+		0644, (unsigned int)1);
+	}
 }
 
 int	init_info(int ac, char **av, t_info *info)
@@ -94,6 +102,9 @@ int	init_philosophers(t_info *info, t_philosopher **philo)
 		(*philo)[i].info = info;
 	}
 	if (init_process(info, philo) == 1)
+	{
+		free_all(info, philo);
 		return (1);
+	}
 	return (0);
 }

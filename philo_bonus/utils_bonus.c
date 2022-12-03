@@ -45,16 +45,17 @@ void	*check_dead(void *arg)
 	philo = (t_philosopher *)arg;
 	while (1)
 	{
-		if (philo->status != FULL && \
-		get_time() - philo->last_time_eat > philo->info->time_to_die)
+		sem_wait(philo->info->check_sem);
+		if (get_time() - philo->last_time_eat > philo->info->time_to_die)
 		{
-			sem_wait(philo->info->print_sem);
 			philo->status = DEAD;
 			philo->info->someone_dead = YES;
+			sem_wait(philo->info->print_sem);
 			printf("%ld %d is dead.\n", \
 			get_time() - philo->info->start_time, philo->index);
 			exit(DEAD);
 		}
+		sem_post(philo->info->check_sem);
 	}
 }
 

@@ -25,6 +25,7 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 			i = -1;
 			while (++i < info->num_of_philos)
 				kill((*philo)[i].pid, SIGTERM);
+			sem_post(info->check_sem);
 			return ;
 		}
 		else if (status >> 8 == FULL)
@@ -42,7 +43,7 @@ int	main(int ac, char **av)
 	t_info			info;
 	t_philosopher	*philo;
 
-	if (ac < 5)
+	if (ac != 5 && ac != 6)
 		return (error_return());
 	if (init_info(ac, av, &info) == 1)
 		return (error_return());

@@ -32,6 +32,7 @@ typedef struct s_info
 	long	start_time;
 	sem_t	*forks_sem;
 	sem_t	*print_sem;
+	sem_t	*check_sem;
 }	t_info;
 
 typedef struct s_philosopher

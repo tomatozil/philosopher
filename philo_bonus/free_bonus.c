@@ -22,5 +22,7 @@ void	free_all(t_info *info, t_philosopher *philo)
 	sem_unlink("forks_sem");
 	sem_close(info->print_sem);
 	sem_unlink("print_sem");
+	sem_close(info->check_sem);
+	sem_unlink("check_sem");
 	free(philo);
 }
