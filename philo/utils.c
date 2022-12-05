@@ -40,13 +40,13 @@ int	ft_atoi(char *str)
 
 int	check_someone_dead(t_info *info)
 {
-	pthread_mutex_lock(&info->check_mutex);
+	pthread_mutex_lock(&info->dead_mutex);
 	if (info->someone_dead == YES)
 	{
-		pthread_mutex_unlock(&info->check_mutex);
+		pthread_mutex_unlock(&info->dead_mutex);
 		return (1);
 	}
-	pthread_mutex_unlock(&info->check_mutex);
+	pthread_mutex_unlock(&info->dead_mutex);
 	return (0);
 }
 
@@ -57,17 +57,17 @@ void	print_status(t_philosopher *philo, char *str)
 
 	info = philo->info;
 	cur_timestamp = get_time() - info->start_time;
-	pthread_mutex_lock(&info->check_mutex);
+	pthread_mutex_lock(&info->dead_mutex);
 	pthread_mutex_lock(&info->print_mutex);
 	if (info->someone_dead == YES)
 	{
 		pthread_mutex_unlock(&info->print_mutex);
-		pthread_mutex_unlock(&info->check_mutex);
+		pthread_mutex_unlock(&info->dead_mutex);
 		return ;
 	}
 	printf("%ld %d %s", cur_timestamp, philo->index, str);
 	pthread_mutex_unlock(&info->print_mutex);
-	pthread_mutex_unlock(&info->check_mutex);
+	pthread_mutex_unlock(&info->dead_mutex);
 }
 
 int	error_return(void)

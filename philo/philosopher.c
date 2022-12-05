@@ -45,7 +45,7 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 				printf("%ld %d is dead.\n", \
 				get_time() - info->start_time, (&(*philo)[i])->index);
 				pthread_mutex_unlock(&info->print_mutex);
-				pthread_mutex_unlock(&info->check_mutex);
+				pthread_mutex_unlock(&info->dead_mutex);
 				return ;
 			}
 			pthread_mutex_unlock(&info->check_mutex);

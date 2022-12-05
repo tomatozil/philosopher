@@ -31,6 +31,7 @@ typedef struct s_info
 	pthread_mutex_t	*fork_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	check_mutex;
+	pthread_mutex_t	dead_mutex;
 }	t_info;
 
 typedef struct s_philosopher
