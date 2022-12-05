@@ -30,6 +30,7 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 		}
 		else if (status >> 8 == FULL)
 		{
+			sem_post(info->check_sem);
 			info->num_of_full++;
 			if (info->num_of_full == info->num_of_philos)
 				break ;

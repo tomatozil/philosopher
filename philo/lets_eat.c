@@ -59,7 +59,7 @@ void	*lets_eat(void *arg)
 
 	philo = (t_philosopher *)arg;
 	info = philo->info;
-	if (philo->index % 2 == 0)
+	if (philo->index % 2 != 0)
 		delay_time(info->time_to_eat / 2);
 	while (1)
 	{

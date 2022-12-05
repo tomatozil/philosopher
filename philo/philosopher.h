@@ -40,7 +40,6 @@ typedef struct s_philosopher
 	int			left_fork;
 	int			right_fork;
 	int			status;
-//	int			is_full;
 	int			eat_count;
 	long		last_time_eat;
 	t_info		*info;

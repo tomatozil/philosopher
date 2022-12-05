@@ -57,7 +57,7 @@ int	lets_eat(t_philosopher *philo)
 	info = philo->info;
 	if (pthread_create(&thread, NULL, check_dead, philo) != 0)
 		exit (1);
-	//detach
+	pthread_detach(thread);
 	if (philo->index % 2 != 0)
 		delay_time(info->time_to_eat / 2);
 	while (1)
@@ -68,13 +68,10 @@ int	lets_eat(t_philosopher *philo)
 			sleeping(philo);
 		else if (philo->status == THINK)
 			thinking(philo);
-		sem_wait(philo->info->check_sem);
 		if (philo->status == FULL)
 		{
-			printf("%d: IMFULL\n", philo->index);
-			sem_post(philo->info->check_sem);
+			sem_wait(philo->info->check_sem);
 			exit (FULL);
 		}
-		sem_post(philo->info->check_sem);
 	}
 }

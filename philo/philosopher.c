@@ -36,8 +36,7 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 		i = -1;
 		while (++i < info->num_of_philos)
 		{
-			pthread_mutex_lock(&info->check_mutex);
-//			(*philo)[i].is_full == NO &&
+			pthread_mutex_lock(&info->dead_mutex);
 			if (get_time() - (*philo)[i].last_time_eat > info->time_to_die)
 			{
 				info->someone_dead = YES;
@@ -48,7 +47,7 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 				pthread_mutex_unlock(&info->dead_mutex);
 				return ;
 			}
-			pthread_mutex_unlock(&info->check_mutex);
+			pthread_mutex_unlock(&info->dead_mutex);
 		}
 		usleep(100);
 	}
