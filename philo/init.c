@@ -39,8 +39,6 @@ int	init_mutex(t_info *info)
 		status = NO;
 	if (pthread_mutex_init(&info->check_mutex, NULL) != 0)
 		status = NO;
-	if (pthread_mutex_init(&info->dead_mutex, NULL) != 0)
-		status = NO;
 	if (status == NO)
 	{
 		free_all(info, NULL);

@@ -33,15 +33,16 @@ void	mutex_free(t_info *info)
 			pthread_mutex_destroy(&info->fork_mutex[i]);
 		}
 	}
-	if (pthread_mutex_destroy(&info->check_mutex) != 0)
-	{
-		pthread_mutex_unlock(&info->check_mutex);
-		pthread_mutex_destroy(&info->check_mutex);
-	}
+	usleep(10);
 	if (pthread_mutex_destroy(&info->print_mutex) != 0)
 	{
 		pthread_mutex_unlock(&info->print_mutex);
 		pthread_mutex_destroy(&info->print_mutex);
+	}
+	if (pthread_mutex_destroy(&info->check_mutex) != 0)
+	{
+		pthread_mutex_unlock(&info->check_mutex);
+		pthread_mutex_destroy(&info->check_mutex);
 	}
 }
 

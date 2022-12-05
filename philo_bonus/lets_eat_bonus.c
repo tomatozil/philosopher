@@ -22,7 +22,6 @@ void	eating(t_philosopher *philo)
 	print_status(philo, "has taken a right fork\n");
 	print_status(philo, "is eating\n");
 	sem_wait(info->check_sem);
-	printf("%d: hinghing\n", philo->index);
 	philo->last_time_eat = get_time();
 	sem_post(info->check_sem);
 	delay_time(info->time_to_eat);
@@ -33,7 +32,6 @@ void	eating(t_philosopher *philo)
 		philo->status = SLEEP;
 	sem_post(info->forks_sem);
 	sem_post(info->forks_sem);
-	printf("%d: hinguhingu\n", philo->index);
 }
 
 void	sleeping(t_philosopher *philo)
