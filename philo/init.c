@@ -100,7 +100,6 @@ int	init_philosophers(t_info *info, t_philosopher **philo)
 		(*philo)[i].right_fork = i + 1;
 		(*philo)[i].eat_count = 0;
 		(*philo)[i].last_time_eat = get_time();
-//		(*philo)[i].is_full = NO;
 		(*philo)[i].info = info;
 	}
 	(*philo)[i - 1].right_fork = 0;

@@ -25,7 +25,6 @@ void	keep_an_eye_on(t_info *info, t_philosopher **philo)
 			i = -1;
 			while (++i < info->num_of_philos)
 				kill((*philo)[i].pid, SIGTERM);
-			sem_post(info->print_sem);
 			return ;
 		}
 		else if (status >> 8 == FULL)
