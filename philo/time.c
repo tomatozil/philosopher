@@ -21,7 +21,7 @@ void	delay_time(long during_time)
 	while (target_time > cur_time)
 	{
 		cur_time = get_time();
-		usleep(250);
+		usleep(100);
 	}
 }
 

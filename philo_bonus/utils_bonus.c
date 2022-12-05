@@ -57,7 +57,6 @@ void	*check_dead(void *arg)
 	}
 }
 
-/* print semaphore 필요할까나? -> 필요하다! */
 void	print_status(t_philosopher *philo, char *str)
 {
 	t_info	*info;
