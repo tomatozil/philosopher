@@ -13,12 +13,9 @@
 
 int	check_info(t_info *info)
 {
-	if (info->num_of_philos < 0 || info->time_to_die < 0 || \
-	info->time_to_eat < 0 || info->time_to_sleep < 0)
+	if (info->num_of_philos <= 0 || info->time_to_die < 0 || \
+	info->time_to_eat < 0 || info->time_to_sleep < 0 || info->num_of_must_eat <= 0)
 		return (1);
-	if (info->num_of_must_eat != NONE)
-		if (info->num_of_must_eat < 0)
-			return (1);
 	return (0);
 }
 
@@ -58,10 +55,10 @@ int	init_info(int ac, char **av, t_info *info)
 	info->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
 		info->num_of_must_eat = ft_atoi(av[5]);
-	else
-		info->num_of_must_eat = NONE;
 	if (check_info(info) == 1)
 		return (1);
+	if (ac == 5)
+		info->num_of_must_eat = NONE;
 	info->someone_dead = NO;
 	info->num_of_full = 0;
 	info->start_time = get_time();
